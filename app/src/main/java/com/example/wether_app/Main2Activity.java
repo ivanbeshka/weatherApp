@@ -24,11 +24,11 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        textView_city = findViewById(R.id.textView);
-        textView_temperature = findViewById(R.id.textView2);
-        textView_wind = findViewById(R.id.textView3);
-        textView_pressure = findViewById(R.id.textView4);
-        textView_humidity = findViewById(R.id.textView5);
+        textView_city = findViewById(R.id.tv_city);
+        textView_temperature = findViewById(R.id.tv_temperature);
+        textView_wind = findViewById(R.id.tv_wind_speed);
+        textView_pressure = findViewById(R.id.tv_pressure);
+        textView_humidity = findViewById(R.id.tv_humidity);
 
         Bundle arguments = getIntent().getExtras();
 
