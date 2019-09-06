@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">weather_app</string>
+    <string name="input_city">Введите город</string>
+    <string name="temperature">Температура</string>
+    <string name="wind_speed">Скорость ветра</string>
+    <string name="pressure">Давление</string>
+    <string name="humidity">Влажность</string>
+    <string name="city">City</string>
+</resources>
