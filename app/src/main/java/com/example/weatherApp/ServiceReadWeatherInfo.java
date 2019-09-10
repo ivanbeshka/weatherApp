@@ -1,4 +1,4 @@
-package com.example.wether_app;
+package com.example.weatherApp;
 
 import android.app.IntentService;
 import android.content.Intent;

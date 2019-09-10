@@ -1,9 +1,12 @@
-package com.example.wether_app;
+package com.example.weatherApp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import java.util.Objects;
 
 public class Main2Activity extends AppCompatActivity {
 
@@ -30,23 +33,25 @@ public class Main2Activity extends AppCompatActivity {
         textViewPressure = findViewById(R.id.tv_pressure);
         textViewHumidity = findViewById(R.id.tv_humidity);
 
-        Bundle arguments = getIntent().getExtras();
+        Intent intent = getIntent();
 
-        textViewCity.setText(arguments.get(cityKey).toString());
+        String city = intent.getStringExtra(cityKey);
+        textViewCity.setText(city);
+        textViewCity.setVisibility(View.VISIBLE);
 
-        if((boolean)arguments.get(temperatureKey)){
+        if(intent.getBooleanExtra(temperatureKey, false)){
             textViewTemperature.setVisibility(View.VISIBLE);
         }
 
-        if((boolean)arguments.get(windKey)){
+        if(intent.getBooleanExtra(windKey, false)){
             textViewWind.setVisibility(View.VISIBLE);
         }
 
-        if((boolean)arguments.get(pressureKey)){
+        if(intent.getBooleanExtra(pressureKey, false)){
             textViewPressure.setVisibility(View.VISIBLE);
         }
 
-        if((boolean)arguments.get(humidityKey)){
+        if(intent.getBooleanExtra(humidityKey, false)){
             textViewHumidity.setVisibility(View.VISIBLE);
         }
     }

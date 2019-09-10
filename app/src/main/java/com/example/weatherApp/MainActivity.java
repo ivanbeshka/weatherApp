@@ -1,4 +1,4 @@
-package com.example.wether_app;
+package com.example.weatherApp;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -9,21 +9,19 @@ import android.hardware.SensorManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
-    private EditText editText;
+    private EditText editTextInputCity;
     private CheckBox checkBoxTemperature;
     private CheckBox checkBoxWindSpeed;
     private CheckBox checkBoxPressure;
     private CheckBox checkBoxHumidity;
-    private FloatingActionButton floatingActionButton;
 
     private TextView textViewCity;
     private TextView textViewTemperature;
@@ -31,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewPressure;
     private TextView textViewHumidity;
 
-    private SensorManager sensorManager;
-    private Sensor temperatureSensor;
-    private Sensor humiditySensor;
+    private static SensorManager sensorManager;
+    private static Sensor temperatureSensor;
+    private static Sensor humiditySensor;
 
     private String cityKey = "city";
     private String temperatureKey = "temperature";
@@ -47,16 +45,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        editText = findViewById(R.id.editText);
-        checkBoxTemperature = findViewById(R.id.checkBox);
-        checkBoxWindSpeed = findViewById(R.id.checkBox2);
-        checkBoxPressure = findViewById(R.id.checkBox3);
-        checkBoxHumidity = findViewById(R.id.checkBox4);
-        floatingActionButton = findViewById(R.id.floatingActionButton);
+        editTextInputCity = findViewById(R.id.et_input_city);
+        checkBoxTemperature = findViewById(R.id.cb_temperature);
+        checkBoxWindSpeed = findViewById(R.id.cb_wind_speed);
+        checkBoxPressure = findViewById(R.id.cb_pressure);
+        checkBoxHumidity = findViewById(R.id.cb_humidity);
+        FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
 
         textViewCity = findViewById(R.id.tv_city);
         textViewTemperature = findViewById(R.id.tv_temperature);
-        textViewWind = findViewById(R.id.tv_pressure);
+        textViewWind = findViewById(R.id.tv_wind_speed);
         textViewPressure = findViewById(R.id.tv_pressure);
         textViewHumidity = findViewById(R.id.tv_humidity);
 
@@ -70,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String city = String.valueOf(editText.getText());
+                String city = editTextInputCity.getText().toString();
                 Boolean temperature = checkBoxTemperature.isChecked();
                 Boolean wind = checkBoxWindSpeed.isChecked();
                 Boolean pressure = checkBoxPressure.isChecked();
@@ -118,10 +116,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (temperatureSensor != null) {
-            sensorManager.registerListener(listenerTemperature, temperatureSensor, sensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(listenerTemperature, temperatureSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
         if (humiditySensor != null) {
-            sensorManager.registerListener(listenerHumidity, humiditySensor, sensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(listenerHumidity, humiditySensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
 
