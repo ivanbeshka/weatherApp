@@ -1,6 +1,9 @@
 package com.example.weatherApp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -39,13 +42,15 @@ public class MainActivity extends AppCompatActivity {
     private static Sensor temperatureSensor;
     private static Sensor humiditySensor;
 
-    private String cityKey = "city";
-    private String temperatureKey = "temperature";
-    private String windKey = "wind";
-    private String pressureKey = "pressure";
-    private String humidityKey = "humidity";
-    private String saveKey = "preferences";
-    private String saveCityKey = "savedCity";
+    private final String cityKey = "city";
+    private final String temperatureKey = "temperature";
+    private final String windKey = "wind";
+    private final String pressureKey = "pressure";
+    private final String humidityKey = "humidity";
+    private final String saveKey = "preferences";
+    private final String saveCityKey = "savedCity";
+
+    private MyBroadcastReceiver MyBroadcastReceiver;
 
 
     @Override
@@ -58,6 +63,14 @@ public class MainActivity extends AppCompatActivity {
 
         //УСТАНОВКА ОБРАБОТЧИКОВ НАЖАТИЯ НА КНОПКИ
         initButtonsListeners();
+
+        MyBroadcastReceiver = new MyBroadcastReceiver();
+
+        // регистрируем BroadcastReceiver
+        IntentFilter intentFilter = new IntentFilter(
+                ServiceReadWeatherInfo.ACTION_MYINTENTSERVICE);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(MyBroadcastReceiver, intentFilter);
 
     }
 
@@ -111,7 +124,8 @@ public class MainActivity extends AppCompatActivity {
     //УСТАНОВКА ОБРАБОТЧИКОВ НАЖАТИЯ НА КНОПКИ
     private void initButtonsListeners() {
 
-        final Intent intent = new Intent(this, Main2Activity.class);
+        final Intent intentMain2 = new Intent(this, Main2Activity.class);
+        final Intent intentService = new Intent(this, ServiceReadWeatherInfo.class);
 
 
         btnSaveHomeCity.setOnClickListener(new View.OnClickListener() {
@@ -143,16 +157,14 @@ public class MainActivity extends AppCompatActivity {
 
                 if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                     //ПОРТРЕТНАЯ ОРИЕНТАЦИЯ ПЕРЕДАЧА НАСТРОЕК
-                    intent.putExtra(cityKey, city);
-                    intent.putExtra(temperatureKey, temperature);
-                    intent.putExtra(windKey, wind);
-                    intent.putExtra(pressureKey, pressure);
-                    intent.putExtra(humidityKey, humidity);
-                    startActivity(intent);
+                    intentMain2.putExtra(cityKey, city);
+                    intentMain2.putExtra(temperatureKey, temperature);
+                    intentMain2.putExtra(windKey, wind);
+                    intentMain2.putExtra(pressureKey, pressure);
+                    intentMain2.putExtra(humidityKey, humidity);
+                    startActivity(intentMain2);
                 } else {
                     //АЛЬБОМНАЯ ОРИЕНТАЦИЯ
-
-
                     if (city.equals("")) {
 
                         textViewCity.setText(loadPreferences(sharedPref));
@@ -160,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
 
                         textViewCity.setText(city);
                     }
+
+                    startService(intentService.putExtra(cityKey, textViewCity.getText().toString()));
 
 
                     textViewCity.setVisibility(View.VISIBLE);
@@ -222,5 +236,21 @@ public class MainActivity extends AppCompatActivity {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         temperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         humiditySensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+    }
+
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String temp = R.string.temperature + " " + intent.getStringExtra(temperatureKey);
+            String humid = R.string.humidity + " " + intent.getStringExtra(humidityKey);
+            String wind = R.string.wind_speed + " " + intent.getStringExtra(windKey);
+            String press = R.string.pressure + " " + intent.getStringExtra(pressureKey);
+
+            textViewTemperature.setText(temp);
+            textViewHumidity.setText(humid);
+            textViewPressure.setText(press);
+            textViewWind.setText(wind);
+
+        }
     }
 }
