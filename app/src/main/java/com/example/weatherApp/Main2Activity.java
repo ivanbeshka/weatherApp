@@ -1,29 +1,34 @@
 package com.example.weatherApp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.Objects;
+import static com.example.weatherApp.MainActivity.cityKey;
+import static com.example.weatherApp.MainActivity.humidityKey;
+import static com.example.weatherApp.MainActivity.pressureKey;
+import static com.example.weatherApp.MainActivity.saveCityKey;
+import static com.example.weatherApp.MainActivity.saveKey;
+import static com.example.weatherApp.MainActivity.temperatureKey;
+import static com.example.weatherApp.MainActivity.windKey;
+import static com.example.weatherApp.ServiceReadWeatherInfo.ACTION_MYINTENTSERVICE;
 
 public class Main2Activity extends AppCompatActivity {
-
-    private String cityKey = "city";
-    private String temperatureKey = "temperature";
-    private String windKey = "wind";
-    private String pressureKey = "pressure";
-    private String humidityKey = "humidity";
-    private String saveKey = "preferences";
-    private String saveCityKey = "savedCity";
 
     private TextView textViewCity;
     private TextView textViewTemperature;
     private TextView textViewWind;
     private TextView textViewPressure;
     private TextView textViewHumidity;
+
+    private MyBroadcastReceiver MyBroadcastReceiver;
+    Intent intentService = new Intent(this, ServiceReadWeatherInfo.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,13 @@ public class Main2Activity extends AppCompatActivity {
         textViewWind = findViewById(R.id.tv_wind_speed);
         textViewPressure = findViewById(R.id.tv_pressure);
         textViewHumidity = findViewById(R.id.tv_humidity);
+
+        MyBroadcastReceiver = new MyBroadcastReceiver();
+
+        // регистрируем BroadcastReceiver
+        IntentFilter intentFilter = new IntentFilter(ACTION_MYINTENTSERVICE);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(MyBroadcastReceiver, intentFilter);
 
         Intent intent = getIntent();
 
@@ -50,6 +62,9 @@ public class Main2Activity extends AppCompatActivity {
 
             textViewCity.setText(city);
         }
+
+        startService(intentService.putExtra(cityKey, city));
+
         textViewCity.setVisibility(View.VISIBLE);
 
 
@@ -67,6 +82,22 @@ public class Main2Activity extends AppCompatActivity {
 
         if (intent.getBooleanExtra(humidityKey, false)) {
             textViewHumidity.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String temp = R.string.temperature + " " + intent.getStringExtra(temperatureKey);
+            String humid = R.string.humidity + " " + intent.getStringExtra(humidityKey);
+            String wind = R.string.wind_speed + " " + intent.getStringExtra(windKey);
+            String press = R.string.pressure + " " + intent.getStringExtra(pressureKey);
+
+            textViewTemperature.setText(temp);
+            textViewHumidity.setText(humid);
+            textViewPressure.setText(press);
+            textViewWind.setText(wind);
+
         }
     }
 

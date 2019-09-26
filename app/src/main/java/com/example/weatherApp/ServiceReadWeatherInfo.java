@@ -2,7 +2,7 @@ package com.example.weatherApp;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.SharedPreferences;
+
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -15,8 +15,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ServiceReadWeatherInfo extends IntentService {
+import static com.example.weatherApp.MainActivity.cityKey;
+import static com.example.weatherApp.MainActivity.humidityKey;
+import static com.example.weatherApp.MainActivity.pressureKey;
+import static com.example.weatherApp.MainActivity.temperatureKey;
+import static com.example.weatherApp.MainActivity.windKey;
 
+public class ServiceReadWeatherInfo extends IntentService {
 
     private String temp;
     private String press;
@@ -24,19 +29,10 @@ public class ServiceReadWeatherInfo extends IntentService {
     private String wind;
 
     public static final String ACTION_MYINTENTSERVICE = "intentservice.RESPONSE";
-    private final String temperatureKey = "temperature";
-    private final String windKey = "wind";
-    private final String pressureKey = "pressure";
-    private final String humidityKey = "humidity";
 
-    private static final String KEY = "apiKey";
     private static final String API_KEY = "d42593a0cb673517005fafe0dde834ff";
 
-    private String cityKey = "city";
-
     private OpenWeather openWeather;
-
-    private SharedPreferences sharedPref;
 
     public ServiceReadWeatherInfo() {
         super("ServiceReadWeatherInfo");
@@ -47,7 +43,6 @@ public class ServiceReadWeatherInfo extends IntentService {
         super.onCreate();
 
         initRetrofit();
-
     }
 
 
@@ -70,7 +65,7 @@ public class ServiceReadWeatherInfo extends IntentService {
 
     private void initRetrofit() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://api.openweathermap.org/") // Базовая часть адреса
+                .baseUrl("https://api.openweathermap.org/") // Базовая часть адреса
                 // Конвертер, необходимый для преобразования JSON'а в объекты
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
@@ -85,10 +80,10 @@ public class ServiceReadWeatherInfo extends IntentService {
                     public void onResponse(@NonNull Call<WeatherRequest> call,
                                            @NonNull Response<WeatherRequest> response) {
                         if (response.body() != null) {
-                           temp = Float.toString(response.body().getMain().getTemp());
-                           press = Integer.toString(response.body().getMain().getPressure());
-                           humid = Integer.toString(response.body().getMain().getHumidity());
-                           wind = Float.toString(response.body().getWind().getSpeed());
+                            temp = Float.toString(response.body().getMain().getTemp());
+                            press = Integer.toString(response.body().getMain().getPressure());
+                            humid = Integer.toString(response.body().getMain().getHumidity());
+                            wind = Float.toString(response.body().getWind().getSpeed());
                         }
                     }
 

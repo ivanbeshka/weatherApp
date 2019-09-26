@@ -13,14 +13,16 @@ import android.hardware.SensorManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import static com.example.weatherApp.ServiceReadWeatherInfo.ACTION_MYINTENTSERVICE;
+
 public class MainActivity extends AppCompatActivity {
+
 
     private EditText editTextInputCity;
     private CheckBox checkBoxTemperature;
@@ -42,16 +44,15 @@ public class MainActivity extends AppCompatActivity {
     private static Sensor temperatureSensor;
     private static Sensor humiditySensor;
 
-    private final String cityKey = "city";
-    private final String temperatureKey = "temperature";
-    private final String windKey = "wind";
-    private final String pressureKey = "pressure";
-    private final String humidityKey = "humidity";
-    private final String saveKey = "preferences";
-    private final String saveCityKey = "savedCity";
+    public static final String cityKey = "city";
+    public static final String temperatureKey = "temperature";
+    public static final String windKey = "wind";
+    public static final String pressureKey = "pressure";
+    public static final String humidityKey = "humidity";
+    public static final String saveKey = "preferences";
+    public static final String saveCityKey = "savedCity";
 
     private MyBroadcastReceiver MyBroadcastReceiver;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +68,7 @@ public class MainActivity extends AppCompatActivity {
         MyBroadcastReceiver = new MyBroadcastReceiver();
 
         // регистрируем BroadcastReceiver
-        IntentFilter intentFilter = new IntentFilter(
-                ServiceReadWeatherInfo.ACTION_MYINTENTSERVICE);
+        IntentFilter intentFilter = new IntentFilter(ACTION_MYINTENTSERVICE);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(MyBroadcastReceiver, intentFilter);
 
@@ -127,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
         final Intent intentMain2 = new Intent(this, Main2Activity.class);
         final Intent intentService = new Intent(this, ServiceReadWeatherInfo.class);
 
-
         btnSaveHomeCity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,12 +146,12 @@ public class MainActivity extends AppCompatActivity {
                 String prefFileName = saveKey;
                 SharedPreferences sharedPref = getSharedPreferences(prefFileName, MODE_PRIVATE);
 
-
                 String city = editTextInputCity.getText().toString();
                 Boolean temperature = checkBoxTemperature.isChecked();
                 Boolean wind = checkBoxWindSpeed.isChecked();
                 Boolean pressure = checkBoxPressure.isChecked();
                 Boolean humidity = checkBoxHumidity.isChecked();
+
 
 
                 if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -173,8 +172,7 @@ public class MainActivity extends AppCompatActivity {
                         textViewCity.setText(city);
                     }
 
-                    startService(intentService.putExtra(cityKey, textViewCity.getText().toString()));
-
+                    startService(intentService.putExtra(cityKey, city));
 
                     textViewCity.setVisibility(View.VISIBLE);
 
