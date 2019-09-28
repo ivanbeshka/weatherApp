@@ -28,7 +28,7 @@ public class Main2Activity extends AppCompatActivity {
     private TextView textViewHumidity;
 
     private MyBroadcastReceiver MyBroadcastReceiver;
-    Intent intentService = new Intent(this, ServiceReadWeatherInfo.class);
+    private Intent intentService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,9 @@ public class Main2Activity extends AppCompatActivity {
         textViewWind = findViewById(R.id.tv_wind_speed);
         textViewPressure = findViewById(R.id.tv_pressure);
         textViewHumidity = findViewById(R.id.tv_humidity);
+
+
+        intentService = new Intent(this, ServiceReadWeatherInfo.class);
 
         MyBroadcastReceiver = new MyBroadcastReceiver();
 

@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String saveKey = "preferences";
     public static final String saveCityKey = "savedCity";
 
-    private MyBroadcastReceiver MyBroadcastReceiver;
+    public static MyBroadcastReceiver MyBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
                 Boolean humidity = checkBoxHumidity.isChecked();
 
 
-
                 if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                     //ПОРТРЕТНАЯ ОРИЕНТАЦИЯ ПЕРЕДАЧА НАСТРОЕК
                     intentMain2.putExtra(cityKey, city);
@@ -239,16 +238,18 @@ public class MainActivity extends AppCompatActivity {
     private class MyBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String temp = R.string.temperature + " " + intent.getStringExtra(temperatureKey);
-            String humid = R.string.humidity + " " + intent.getStringExtra(humidityKey);
-            String wind = R.string.wind_speed + " " + intent.getStringExtra(windKey);
-            String press = R.string.pressure + " " + intent.getStringExtra(pressureKey);
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                String temp = R.string.temperature + " " + intent.getStringExtra(temperatureKey);
+                String humid = R.string.humidity + " " + intent.getStringExtra(humidityKey);
+                String wind = R.string.wind_speed + " " + intent.getStringExtra(windKey);
+                String press = R.string.pressure + " " + intent.getStringExtra(pressureKey);
 
-            textViewTemperature.setText(temp);
-            textViewHumidity.setText(humid);
-            textViewPressure.setText(press);
-            textViewWind.setText(wind);
+                textViewTemperature.setText(temp);
+                textViewHumidity.setText(humid);
+                textViewPressure.setText(press);
+                textViewWind.setText(wind);
 
+            }
         }
     }
 }
