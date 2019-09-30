@@ -239,15 +239,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                String temp = R.string.temperature + " " + intent.getStringExtra(temperatureKey);
-                String humid = R.string.humidity + " " + intent.getStringExtra(humidityKey);
-                String wind = R.string.wind_speed + " " + intent.getStringExtra(windKey);
-                String press = R.string.pressure + " " + intent.getStringExtra(pressureKey);
+                String temp = intent.getStringExtra(temperatureKey);
+                String humid = intent.getStringExtra(humidityKey);
+                String wind = intent.getStringExtra(windKey);
+                String press = intent.getStringExtra(pressureKey);
 
-                textViewTemperature.setText(temp);
-                textViewHumidity.setText(humid);
-                textViewPressure.setText(press);
-                textViewWind.setText(wind);
+                textViewTemperature.setText(temperatureKey + " " + temp);
+                textViewHumidity.setText(humidityKey + " " + humid);
+                textViewPressure.setText(pressureKey + " " + press);
+                textViewWind.setText(windKey + " " + wind);
 
             }
         }

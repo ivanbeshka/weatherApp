@@ -3,7 +3,6 @@ package com.example.weatherApp;
 import android.app.IntentService;
 import android.content.Intent;
 
-import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -52,16 +51,6 @@ public class ServiceReadWeatherInfo extends IntentService {
 
         String city = intent.getStringExtra(cityKey);
         requestRetrofit(city, API_KEY);
-
-        // возвращаем результат
-            Intent responseIntent1 = new Intent();
-            responseIntent1.setAction(ACTION_MYINTENTSERVICE);
-            responseIntent1.addCategory(Intent.CATEGORY_DEFAULT);
-            responseIntent1.putExtra(temperatureKey, temp);
-            responseIntent1.putExtra(humidityKey, humid);
-            responseIntent1.putExtra(pressureKey, press);
-            responseIntent1.putExtra(windKey, wind);
-            sendBroadcast(responseIntent1);
     }
 
     private void initRetrofit() {
@@ -85,6 +74,15 @@ public class ServiceReadWeatherInfo extends IntentService {
                             press = Integer.toString(response.body().getMain().getPressure());
                             humid = Integer.toString(response.body().getMain().getHumidity());
                             wind = Float.toString(response.body().getWind().getSpeed());
+
+                            Intent responseIntent = new Intent();
+                            responseIntent.setAction(ACTION_MYINTENTSERVICE);
+                            responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                            responseIntent.putExtra(temperatureKey, temp);
+                            responseIntent.putExtra(humidityKey, humid);
+                            responseIntent.putExtra(pressureKey, press);
+                            responseIntent.putExtra(windKey, wind);
+                            sendBroadcast(responseIntent);
                         }
                     }
 
