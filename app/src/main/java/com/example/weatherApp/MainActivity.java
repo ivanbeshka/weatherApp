@@ -19,6 +19,12 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.weatherApp.database.WeatherDBReader;
+import com.example.weatherApp.database.WeatherDBSource;
+import com.example.weatherApp.model.Main;
+
+import java.util.Calendar;
+
 import static com.example.weatherApp.ServiceReadWeatherInfo.ACTION_MYINTENTSERVICE;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,12 +58,21 @@ public class MainActivity extends AppCompatActivity {
     public static final String saveKey = "preferences";
     public static final String saveCityKey = "savedCity";
 
+    private static String temp;
+
     public static MyBroadcastReceiver MyBroadcastReceiver;
+
+    //чтение данных
+    private WeatherDBReader weatherDBReader;
+    //получение данных
+    private WeatherDBSource weatherDBSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initDBSource();
 
         //ИНИЦИАЛИЗАЦИЯ ВЬЮ
         initialize();
@@ -72,6 +87,16 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(MyBroadcastReceiver, intentFilter);
 
+    }
+
+    private void initDBSource() {
+        weatherDBSource = new WeatherDBSource(getApplicationContext());
+        weatherDBSource.open();
+        weatherDBReader = weatherDBSource.getWeatherDBReader();
+    }
+
+    private void dataUpdated() {
+        weatherDBReader.refresh();
     }
 
 
@@ -176,6 +201,8 @@ public class MainActivity extends AppCompatActivity {
                     textViewCity.setVisibility(View.VISIBLE);
 
 
+
+
                     if (temperature) {
                         textViewTemperature.setVisibility(View.VISIBLE);
                     }
@@ -243,11 +270,21 @@ public class MainActivity extends AppCompatActivity {
                 String humid = intent.getStringExtra(humidityKey);
                 String wind = intent.getStringExtra(windKey);
                 String press = intent.getStringExtra(pressureKey);
+                String time = Calendar.getInstance().getTime().toString();
+//                float windInt = Float.parseFloat(wind);
+//                int pressInt = Integer.parseInt(press);
+//                int humidInt = Integer.parseInt(humid);
+
+                weatherDBSource.addWeather(String.valueOf(textViewCity.getText()), Float.parseFloat(temp),
+                        1, 1, 1, time);
+                dataUpdated();
 
                 textViewTemperature.setText(temperatureKey + " " + temp);
                 textViewHumidity.setText(humidityKey + " " + humid);
                 textViewPressure.setText(pressureKey + " " + press);
                 textViewWind.setText(windKey + " " + wind);
+
+
 
             }
         }
