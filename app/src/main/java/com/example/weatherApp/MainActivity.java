@@ -21,7 +21,6 @@ import android.widget.TextView;
 
 import com.example.weatherApp.database.WeatherDBReader;
 import com.example.weatherApp.database.WeatherDBSource;
-import com.example.weatherApp.model.Main;
 
 import java.util.Calendar;
 
@@ -57,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String humidityKey = "humidity";
     public static final String saveKey = "preferences";
     public static final String saveCityKey = "savedCity";
-
-    private static String temp;
 
     public static MyBroadcastReceiver MyBroadcastReceiver;
 
@@ -271,20 +268,16 @@ public class MainActivity extends AppCompatActivity {
                 String wind = intent.getStringExtra(windKey);
                 String press = intent.getStringExtra(pressureKey);
                 String time = Calendar.getInstance().getTime().toString();
-//                float windInt = Float.parseFloat(wind);
-//                int pressInt = Integer.parseInt(press);
-//                int humidInt = Integer.parseInt(humid);
 
+                //добавление погоды в базу данных
                 weatherDBSource.addWeather(String.valueOf(textViewCity.getText()), Float.parseFloat(temp),
-                        1, 1, 1, time);
+                        Float.parseFloat(wind), Integer.parseInt(press), Integer.parseInt(humid), time);
                 dataUpdated();
 
                 textViewTemperature.setText(temperatureKey + " " + temp);
                 textViewHumidity.setText(humidityKey + " " + humid);
                 textViewPressure.setText(pressureKey + " " + press);
                 textViewWind.setText(windKey + " " + wind);
-
-
 
             }
         }

@@ -58,10 +58,12 @@
         android:ems="10"
         android:hint="@string/input_city"
         android:inputType="text"
+        app:layout_constraintBottom_toTopOf="@+id/cb_temperature"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -84,12 +86,12 @@
 
     <include
         layout="@layout/activity_main2"
-        android:layout_width="396dp"
-        android:layout_height="403dp"
+        android:layout_width="369dp"
+        android:layout_height="410dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"></include>
+        app:layout_constraintVertical_bias="0.0"></include>
 
     <Button
         android:id="@+id/btn_save_home_city"
@@ -101,7 +103,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
         app:layout_constraintHorizontal_bias="0.031"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cb_pressure"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/btn_delete_home_city"

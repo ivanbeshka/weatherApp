@@ -34,7 +34,7 @@ public class WeatherDBSource implements Closeable {
     }
 
     // Добавить новую запись
-    public WeatherDBStructure addWeather(String city, float temperature, int wind, int pressure,
+    public WeatherDBStructure addWeather(String city, float temperature, float wind, int pressure,
                               int humidity, String time) {
         ContentValues values = new ContentValues();
 
@@ -67,7 +67,7 @@ public class WeatherDBSource implements Closeable {
     }
 
     // Изменить запись
-    public void editWeather(WeatherDBStructure weather, String city, float temperature, int wind, int pressure,
+    public void editWeather(WeatherDBStructure weather, String city, float temperature, float wind, int pressure,
                             int humidity, String time) {
         ContentValues editedWeather = new ContentValues();
 

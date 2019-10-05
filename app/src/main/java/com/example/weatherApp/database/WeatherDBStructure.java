@@ -7,7 +7,7 @@ public class WeatherDBStructure {
     private long id;
     private String city;
     private float temperature;
-    private int wind;
+    private float wind;
     private int pressure;
     private int humidity;
     private String time;
@@ -36,11 +36,11 @@ public class WeatherDBStructure {
         return pressure;
     }
 
-    public void setWind(int wind) {
+    public void setWind(float wind) {
         this.wind = wind;
     }
 
-    public int getWind() {
+    public float getWind() {
         return wind;
     }
 

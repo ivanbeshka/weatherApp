@@ -63,7 +63,7 @@ public class WeatherDBReader implements Closeable {
         weatherDBStructure.setId(cursor.getLong(0));
         weatherDBStructure.setCity(cursor.getString(1));
         weatherDBStructure.setTemperature(cursor.getFloat(2));
-        weatherDBStructure.setWind(cursor.getInt(3));
+        weatherDBStructure.setWind(cursor.getFloat(3));
         weatherDBStructure.setPressure(cursor.getInt(4));
         weatherDBStructure.setHumidity(cursor.getInt(5));
         weatherDBStructure.setTime(cursor.getString(6));

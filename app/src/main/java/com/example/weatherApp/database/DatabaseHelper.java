@@ -33,7 +33,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + TABLE_WEATHER + " (" + COLUMN_ID
                 + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_CITY + " TEXT," +
                 COLUMN_TEMPERATURE + " REAL," +
-                COLUMN_WIND + " INTEGER," +
+                COLUMN_WIND + " REAL," +
                 COLUMN_PRESSURE + " INTEGER," +
                 COLUMN_HUMIDITY + " INTEGER," +
                 COLUMN_TIME + " TEXT" + ");");

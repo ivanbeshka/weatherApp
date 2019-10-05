@@ -10,6 +10,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.weatherApp.database.WeatherDBReader;
+import com.example.weatherApp.database.WeatherDBSource;
+
+import java.util.Calendar;
+
 import static com.example.weatherApp.MainActivity.cityKey;
 import static com.example.weatherApp.MainActivity.humidityKey;
 import static com.example.weatherApp.MainActivity.pressureKey;
@@ -30,6 +35,12 @@ public class Main2Activity extends AppCompatActivity {
     private MyBroadcastReceiver MyBroadcastReceiver;
     private Intent intentService;
 
+    //чтение данных
+    private WeatherDBReader weatherDBReader;
+    //получение данных
+    private WeatherDBSource weatherDBSource;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +52,7 @@ public class Main2Activity extends AppCompatActivity {
         textViewPressure = findViewById(R.id.tv_pressure);
         textViewHumidity = findViewById(R.id.tv_humidity);
 
+        initDBSource();
 
         intentService = new Intent(this, ServiceReadWeatherInfo.class);
 
@@ -96,12 +108,29 @@ public class Main2Activity extends AppCompatActivity {
             String wind = intent.getStringExtra(windKey);
             String press = intent.getStringExtra(pressureKey);
 
+            String time = Calendar.getInstance().getTime().toString();
+
+            //добавление погоды в базу данных
+            weatherDBSource.addWeather(String.valueOf(textViewCity.getText()), Float.parseFloat(temp),
+                    Float.parseFloat(wind), Integer.parseInt(press), Integer.parseInt(humid), time);
+            dataUpdated();
+
             textViewTemperature.setText(temperatureKey + " " + temp);
             textViewHumidity.setText(humidityKey + " " + humid);
             textViewPressure.setText(pressureKey + " " + press);
             textViewWind.setText(windKey + " " + wind);
 
         }
+    }
+
+    private void initDBSource() {
+        weatherDBSource = new WeatherDBSource(getApplicationContext());
+        weatherDBSource.open();
+        weatherDBReader = weatherDBSource.getWeatherDBReader();
+    }
+
+    private void dataUpdated() {
+        weatherDBReader.refresh();
     }
 
     //ПОЛУЧАЕМ СОХРАНЁННЫЙ ГОРОД
