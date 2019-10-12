@@ -12,9 +12,15 @@ public class WeatherDBReader implements Closeable {
     // но сами данные считываются только по необходимости
     private final SQLiteDatabase database;
 
-    private final String[] notesAllColumn = {
+    private final String[] weatherAllColumn = {
             DatabaseHelper.COLUMN_ID,
-
+            DatabaseHelper.COLUMN_CITY,
+            DatabaseHelper.COLUMN_TEMPERATURE,
+            DatabaseHelper.COLUMN_WIND,
+            DatabaseHelper.COLUMN_PRESSURE,
+            DatabaseHelper.COLUMN_HUMIDITY,
+            DatabaseHelper.COLUMN_DATE,
+            DatabaseHelper.COLUMN_TIME
     };
 
     public WeatherDBReader(SQLiteDatabase database) {
@@ -41,11 +47,11 @@ public class WeatherDBReader implements Closeable {
     // создание запроса
     private void query() {
         cursor = database.query(DatabaseHelper.TABLE_WEATHER,
-                notesAllColumn, null, null,
+                weatherAllColumn, null, null,
                 null, null, null);
     }
 
-    // прочитать данные по определенной позиции
+    // прочитать данные по определенному ID
     public WeatherDBStructure getPosition(int position) {
         cursor.moveToPosition(position);
         return cursorToWeather();
@@ -66,7 +72,8 @@ public class WeatherDBReader implements Closeable {
         weatherDBStructure.setWind(cursor.getFloat(3));
         weatherDBStructure.setPressure(cursor.getInt(4));
         weatherDBStructure.setHumidity(cursor.getInt(5));
-        weatherDBStructure.setTime(cursor.getString(6));
+        weatherDBStructure.setDate(cursor.getString(6));
+        weatherDBStructure.setTime(cursor.getLong(7));
 
         return weatherDBStructure;
     }

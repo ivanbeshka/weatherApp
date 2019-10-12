@@ -35,7 +35,7 @@ public class WeatherDBSource implements Closeable {
 
     // Добавить новую запись
     public WeatherDBStructure addWeather(String city, float temperature, float wind, int pressure,
-                              int humidity, String time) {
+                              int humidity, String date, long time) {
         ContentValues values = new ContentValues();
 
 
@@ -44,6 +44,7 @@ public class WeatherDBSource implements Closeable {
         values.put(DatabaseHelper.COLUMN_WIND, wind);
         values.put(DatabaseHelper.COLUMN_PRESSURE, pressure);
         values.put(DatabaseHelper.COLUMN_HUMIDITY, humidity);
+        values.put(DatabaseHelper.COLUMN_DATE, date);
         values.put(DatabaseHelper.COLUMN_TIME, time);
 
 
@@ -60,15 +61,15 @@ public class WeatherDBSource implements Closeable {
         newWeather.setPressure(pressure);
         newWeather.setHumidity(humidity);
         newWeather.setTime(time);
+        newWeather.setDate(date);
         newWeather.setId(insertId);
-
 
         return newWeather;
     }
 
     // Изменить запись
     public void editWeather(WeatherDBStructure weather, String city, float temperature, float wind, int pressure,
-                            int humidity, String time) {
+                            int humidity, String date, long time) {
         ContentValues editedWeather = new ContentValues();
 
         editedWeather.put(DatabaseHelper.COLUMN_ID, weather.getId());
@@ -77,6 +78,7 @@ public class WeatherDBSource implements Closeable {
         editedWeather.put(DatabaseHelper.COLUMN_WIND, wind);
         editedWeather.put(DatabaseHelper.COLUMN_PRESSURE, pressure);
         editedWeather.put(DatabaseHelper.COLUMN_HUMIDITY, humidity);
+        editedWeather.put(DatabaseHelper.COLUMN_DATE, date);
         editedWeather.put(DatabaseHelper.COLUMN_TIME, time);
 
         // изменение записи

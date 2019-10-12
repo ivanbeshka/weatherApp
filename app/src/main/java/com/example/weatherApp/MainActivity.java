@@ -1,18 +1,21 @@
 package com.example.weatherApp;
 
 import android.content.BroadcastReceiver;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -22,11 +25,12 @@ import android.widget.TextView;
 import com.example.weatherApp.database.WeatherDBReader;
 import com.example.weatherApp.database.WeatherDBSource;
 
-import java.util.Calendar;
+import java.util.Date;
 
 import static com.example.weatherApp.ServiceReadWeatherInfo.ACTION_MYINTENTSERVICE;
 
 public class MainActivity extends AppCompatActivity {
+    //TODO реализовать список с выбором города
 
 
     private EditText editTextInputCity;
@@ -43,11 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton floatingActionButton;
     private Button btnSaveHomeCity;
-    private Button btnDeleteHomeCity;
-
-    private static SensorManager sensorManager;
-    private static Sensor temperatureSensor;
-    private static Sensor humiditySensor;
 
     public static final String cityKey = "city";
     public static final String temperatureKey = "temperature";
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String saveKey = "preferences";
     public static final String saveCityKey = "savedCity";
 
-    public static MyBroadcastReceiver MyBroadcastReceiver;
+    public static MyBroadcastReceiver myBroadcastReceiver;
 
     //чтение данных
     private WeatherDBReader weatherDBReader;
@@ -72,18 +71,25 @@ public class MainActivity extends AppCompatActivity {
         initDBSource();
 
         //ИНИЦИАЛИЗАЦИЯ ВЬЮ
-        initialize();
+        initializeView();
 
         //УСТАНОВКА ОБРАБОТЧИКОВ НАЖАТИЯ НА КНОПКИ
         initButtonsListeners();
 
-        MyBroadcastReceiver = new MyBroadcastReceiver();
+        myBroadcastReceiver = new MyBroadcastReceiver();
 
         // регистрируем BroadcastReceiver
         IntentFilter intentFilter = new IntentFilter(ACTION_MYINTENTSERVICE);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(MyBroadcastReceiver, intentFilter);
+        registerReceiver(myBroadcastReceiver, intentFilter);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        unregisterReceiver(myBroadcastReceiver);
+        super.onDestroy();
     }
 
     private void initDBSource() {
@@ -95,52 +101,6 @@ public class MainActivity extends AppCompatActivity {
     private void dataUpdated() {
         weatherDBReader.refresh();
     }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        //ОТКЛЮЧЕНИЕ СЕНСОРОВ
-        sensorManager.unregisterListener(listenerTemperature, temperatureSensor);
-        sensorManager.unregisterListener(listenerHumidity, humiditySensor);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-//        //СЕНСОРЫ
-//        if (temperatureSensor != null) {
-//            sensorManager.registerListener(listenerTemperature, temperatureSensor, SensorManager.SENSOR_DELAY_NORMAL);
-//        }
-//        if (humiditySensor != null) {
-//            sensorManager.registerListener(listenerHumidity, humiditySensor, SensorManager.SENSOR_DELAY_NORMAL);
-//        }
-    }
-
-    private final SensorEventListener listenerTemperature = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            textViewTemperature.setText(R.string.temperature + ": " + event.values[0]);
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-    };
-
-    private final SensorEventListener listenerHumidity = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            textViewHumidity.setText(R.string.humidity + ": " + event.values[0]);
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-        }
-    };
 
 
     //УСТАНОВКА ОБРАБОТЧИКОВ НАЖАТИЯ НА КНОПКИ
@@ -162,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
 
@@ -193,12 +154,12 @@ public class MainActivity extends AppCompatActivity {
                         textViewCity.setText(city);
                     }
 
-                    startService(intentService.putExtra(cityKey, city));
+                    if (isOnline(MainActivity.this)) {
+                        startService(intentService.putExtra(cityKey, city));
+                    }
+
 
                     textViewCity.setVisibility(View.VISIBLE);
-
-
-
 
                     if (temperature) {
                         textViewTemperature.setVisibility(View.VISIBLE);
@@ -220,6 +181,45 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    //ПОЛУЧЕНИЕ ЗНАЧЕНИЙ ОТ СЕРВИСА
+    private class MyBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                String temp = intent.getStringExtra(temperatureKey);
+                String humid = intent.getStringExtra(humidityKey);
+                String wind = intent.getStringExtra(windKey);
+                String press = intent.getStringExtra(pressureKey);
+
+                String date = String.valueOf(new Date());
+
+                long time = new Date().getTime();
+
+                //добавление погоды в базу данных
+                weatherDBSource.addWeather(String.valueOf(textViewCity.getText()), Float.parseFloat(temp),
+                        Float.parseFloat(wind), Integer.parseInt(press), Integer.parseInt(humid), date, time);
+                dataUpdated();
+
+                textViewTemperature.setText(temperatureKey + " " + temp);
+                textViewHumidity.setText(humidityKey + " " + humid);
+                textViewPressure.setText(pressureKey + " " + press);
+                textViewWind.setText(windKey + " " + wind);
+
+            }
+        }
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+            return true;
+        }
+        return false;
+    }
+
     //СОХРАНЯЕМ НАСТРОЙКИ(ГОРОД)
     private void savePref(SharedPreferences sharedPref) {
 
@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //ИНИЦИАЛИЗАЦИЯ ВЬЮ
-    private void initialize() {
+    private void initializeView() {
         editTextInputCity = findViewById(R.id.et_input_city);
         checkBoxTemperature = findViewById(R.id.cb_temperature);
         checkBoxWindSpeed = findViewById(R.id.cb_wind_speed);
@@ -246,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
 
         floatingActionButton = findViewById(R.id.floatingActionButton);
         btnSaveHomeCity = findViewById(R.id.btn_save_home_city);
-        btnDeleteHomeCity = findViewById(R.id.btn_delete_home_city);
 
         textViewCity = findViewById(R.id.tv_city);
         textViewTemperature = findViewById(R.id.tv_temperature);
@@ -254,32 +253,6 @@ public class MainActivity extends AppCompatActivity {
         textViewPressure = findViewById(R.id.tv_pressure);
         textViewHumidity = findViewById(R.id.tv_humidity);
 
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        temperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-        humiditySensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-    }
-
-    private class MyBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                String temp = intent.getStringExtra(temperatureKey);
-                String humid = intent.getStringExtra(humidityKey);
-                String wind = intent.getStringExtra(windKey);
-                String press = intent.getStringExtra(pressureKey);
-                String time = Calendar.getInstance().getTime().toString();
-
-                //добавление погоды в базу данных
-                weatherDBSource.addWeather(String.valueOf(textViewCity.getText()), Float.parseFloat(temp),
-                        Float.parseFloat(wind), Integer.parseInt(press), Integer.parseInt(humid), time);
-                dataUpdated();
-
-                textViewTemperature.setText(temperatureKey + " " + temp);
-                textViewHumidity.setText(humidityKey + " " + humid);
-                textViewPressure.setText(pressureKey + " " + press);
-                textViewWind.setText(windKey + " " + wind);
-
-            }
-        }
     }
 }
+

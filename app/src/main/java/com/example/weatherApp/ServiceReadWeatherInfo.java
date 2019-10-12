@@ -70,8 +70,8 @@ public class ServiceReadWeatherInfo extends IntentService {
                     public void onResponse(@NonNull Call<WeatherRequest> call,
                                            @NonNull Response<WeatherRequest> response) {
                         if (response.body() != null) {
-                            temp = Float.toString(response.body().getMain().getTemp());
-                            press = Integer.toString(response.body().getMain().getPressure());
+                            temp = Float.toString((float) (response.body().getMain().getTemp() - 273.15));
+                            press = Integer.toString((int) (response.body().getMain().getPressure() * 0.750062));
                             humid = Integer.toString(response.body().getMain().getHumidity());
                             wind = Float.toString(response.body().getWind().getSpeed());
 

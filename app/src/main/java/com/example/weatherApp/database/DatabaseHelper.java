@@ -18,6 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_WIND = "wind";
     public static final String COLUMN_PRESSURE = "pressure";
     public static final String COLUMN_HUMIDITY = "humidity";
+    public static final String COLUMN_DATE = "date";
     public static final String COLUMN_TIME = "time";
 
     public DatabaseHelper(Context context) {
@@ -36,7 +37,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_WIND + " REAL," +
                 COLUMN_PRESSURE + " INTEGER," +
                 COLUMN_HUMIDITY + " INTEGER," +
-                COLUMN_TIME + " TEXT" + ");");
+                COLUMN_DATE + " TEXT," +
+                COLUMN_TIME + " REAL" + ");");
     }
 
 

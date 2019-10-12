@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +15,7 @@ import android.widget.TextView;
 import com.example.weatherApp.database.WeatherDBReader;
 import com.example.weatherApp.database.WeatherDBSource;
 
-import java.util.Calendar;
+import java.util.Date;
 
 import static com.example.weatherApp.MainActivity.cityKey;
 import static com.example.weatherApp.MainActivity.humidityKey;
@@ -32,7 +34,7 @@ public class Main2Activity extends AppCompatActivity {
     private TextView textViewPressure;
     private TextView textViewHumidity;
 
-    private MyBroadcastReceiver MyBroadcastReceiver;
+    private MyBroadcastReceiver myBroadcastReceiver;
     private Intent intentService;
 
     //чтение данных
@@ -46,22 +48,18 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        textViewCity = findViewById(R.id.tv_city);
-        textViewTemperature = findViewById(R.id.tv_temperature);
-        textViewWind = findViewById(R.id.tv_wind_speed);
-        textViewPressure = findViewById(R.id.tv_pressure);
-        textViewHumidity = findViewById(R.id.tv_humidity);
+        initializeView();
 
         initDBSource();
 
         intentService = new Intent(this, ServiceReadWeatherInfo.class);
 
-        MyBroadcastReceiver = new MyBroadcastReceiver();
+        myBroadcastReceiver = new MyBroadcastReceiver();
 
         // регистрируем BroadcastReceiver
         IntentFilter intentFilter = new IntentFilter(ACTION_MYINTENTSERVICE);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(MyBroadcastReceiver, intentFilter);
+        registerReceiver(myBroadcastReceiver, intentFilter);
 
         Intent intent = getIntent();
 
@@ -78,7 +76,10 @@ public class Main2Activity extends AppCompatActivity {
             textViewCity.setText(city);
         }
 
-        startService(intentService.putExtra(cityKey, city));
+        if(isOnline(this)){
+            startService(intentService.putExtra(cityKey, city));
+        }
+
 
         textViewCity.setVisibility(View.VISIBLE);
 
@@ -100,6 +101,21 @@ public class Main2Activity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+
+        unregisterReceiver(myBroadcastReceiver);
+        super.onDestroy();
+    }
+
+    private void initializeView() {
+        textViewCity = findViewById(R.id.tv_city);
+        textViewTemperature = findViewById(R.id.tv_temperature);
+        textViewWind = findViewById(R.id.tv_wind_speed);
+        textViewPressure = findViewById(R.id.tv_pressure);
+        textViewHumidity = findViewById(R.id.tv_humidity);
+    }
+
     private class MyBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -108,11 +124,12 @@ public class Main2Activity extends AppCompatActivity {
             String wind = intent.getStringExtra(windKey);
             String press = intent.getStringExtra(pressureKey);
 
-            String time = Calendar.getInstance().getTime().toString();
+            String date = String.valueOf(new Date());
+            long time = new Date().getTime();
 
             //добавление погоды в базу данных
             weatherDBSource.addWeather(String.valueOf(textViewCity.getText()), Float.parseFloat(temp),
-                    Float.parseFloat(wind), Integer.parseInt(press), Integer.parseInt(humid), time);
+                    Float.parseFloat(wind), Integer.parseInt(press), Integer.parseInt(humid), date, time);
             dataUpdated();
 
             textViewTemperature.setText(temperatureKey + " " + temp);
@@ -131,6 +148,18 @@ public class Main2Activity extends AppCompatActivity {
 
     private void dataUpdated() {
         weatherDBReader.refresh();
+    }
+
+    public static boolean isOnline(Context context)
+    {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        if (netInfo != null && netInfo.isConnectedOrConnecting())
+        {
+            return true;
+        }
+        return false;
     }
 
     //ПОЛУЧАЕМ СОХРАНЁННЫЙ ГОРОД
