@@ -42,9 +42,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"
         android:text="@string/humidity"
-        app:layout_constraintBottom_toTopOf="@+id/btn_save_home_city"
+        app:layout_constraintBottom_toTopOf="@+id/sw_geoCoord"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cb_pressure"
         app:layout_constraintVertical_bias="0.0" />
@@ -87,12 +86,14 @@
 
     <include
         layout="@layout/activity_main2"
-        android:layout_width="358dp"
-        android:layout_height="361dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="209dp"
+        android:layout_height="254dp"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.328"
+        app:layout_constraintStart_toEndOf="@+id/et_input_city"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"></include>
+        app:layout_constraintVertical_bias="0.333"></include>
 
     <Button
         android:id="@+id/btn_save_home_city"
@@ -106,7 +107,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cb_pressure"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/cb_humidity"
+        app:layout_constraintVertical_bias="0.925" />
+
+    <Switch
+        android:id="@+id/sw_geoCoord"
+        android:layout_width="97dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/geo_coords"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/floatingActionButton" />
 
 </android.support.constraint.ConstraintLayout>

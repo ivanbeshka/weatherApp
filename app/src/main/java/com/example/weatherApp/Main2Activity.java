@@ -42,6 +42,7 @@ public class Main2Activity extends AppCompatActivity {
     //получение данных
     private WeatherDBSource weatherDBSource;
 
+    private boolean geoCoords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,20 @@ public class Main2Activity extends AppCompatActivity {
         SharedPreferences sharedPref = getSharedPreferences(prefFileName, MODE_PRIVATE);
 
         String city = intent.getStringExtra(cityKey);
+        double lat = intent.getDoubleExtra("lat", 0);
+        double lot = intent.getDoubleExtra("lot", 0);
+
+        geoCoords = intent.getBooleanExtra("GeoCoord", false);
+
+
+        //если включены геокоординаты и подключён интернет
+        if (isOnline(getApplicationContext()) && geoCoords) {
+
+            intentService.putExtra("GeoCoord", true);
+            intentService.putExtra("lat", lat);
+            intentService.putExtra("lot", lot);
+            startService(intentService);
+        }
 
         if (city.equals("")) {
 
@@ -76,7 +91,7 @@ public class Main2Activity extends AppCompatActivity {
             textViewCity.setText(city);
         }
 
-        if(isOnline(this)){
+        if (isOnline(this)) {
             startService(intentService.putExtra(cityKey, city));
         }
 
@@ -124,6 +139,11 @@ public class Main2Activity extends AppCompatActivity {
             String wind = intent.getStringExtra(windKey);
             String press = intent.getStringExtra(pressureKey);
 
+            if (geoCoords) {
+                String city = intent.getStringExtra(cityKey);
+                textViewCity.setText(city);
+            }
+
             String date = String.valueOf(new Date());
             long time = new Date().getTime();
 
@@ -150,13 +170,11 @@ public class Main2Activity extends AppCompatActivity {
         weatherDBReader.refresh();
     }
 
-    public static boolean isOnline(Context context)
-    {
+    public static boolean isOnline(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if (netInfo != null && netInfo.isConnectedOrConnecting())
-        {
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
             return true;
         }
         return false;

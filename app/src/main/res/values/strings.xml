@@ -9,4 +9,5 @@
     <string name="save_home_city">save home city</string>
     <string name="delete_home_city">delete</string>
     <string name="error">ERROR!</string>
+    <string name="geo_coords">Geo coords</string>
 </resources>

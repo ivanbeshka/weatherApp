@@ -3,7 +3,7 @@ package com.example.weatherApp.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class WeatherRequest {
+public class WeatherRequestCity {
     @SerializedName("coord")
     @Expose
     private Coord coord;

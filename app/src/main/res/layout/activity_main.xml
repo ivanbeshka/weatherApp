@@ -93,5 +93,15 @@
         app:layout_constraintTop_toBottomOf="@+id/cb_humidity"
         app:layout_constraintVertical_bias="1.0" />
 
+    <Switch
+        android:id="@+id/sw_geoCoord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/geo_coords"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </android.support.constraint.ConstraintLayout>
